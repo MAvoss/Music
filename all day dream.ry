@@ -1,0 +1,145 @@
+use_bpm 172
+beat = 1
+Note = :G
+MM = :minor
+SUS = 2
+INVRT = 1
+
+define :drums do
+  sample :drum_heavy_kick
+  sleep beat
+  sample :drum_cymbal_soft, invert: 1
+  sleep beat
+  sample :drum_cymbal_soft
+  sleep beat
+  sample :drum_snare_soft
+  sleep beat
+end
+define :mainriff do
+  play chord(Note, MM,sustain: 2)
+  sleep beat
+  play chord(Note, MM,sustain: 2, invert: 1)
+  sleep beat
+  play chord(Note, MM,sustain: 2)
+  sleep beat
+end
+define :backriff do
+  play :G
+  sleep beat
+  
+end
+define :secriff do
+  play chord(Note, MM,sustain: 2)
+  sleep beat
+  play chord(Note, MM,sustain: 2)
+  sleep beat
+  play chord(Note, MM,sustain: 2)
+  sleep beat
+end
+
+define :second do
+  Note = :G
+  MM = :minor
+  secriff
+  Note = :C
+  MM = :major
+  secriff
+  
+end
+
+define :intro do
+  Note = :G
+  MM = :minor
+  mainriff
+  Note = :C
+  MM = :major
+  mainriff
+  Note = :A
+  MM = :minor
+  mainriff
+  Note = :D
+  MM = :minor
+  mainriff
+  Note = :G
+  MM = :minor
+  mainriff
+  Note = :C
+  MM = :major
+  mainriff
+  Note = :F
+  MM = :major
+  mainriff
+  mainriff
+end
+
+
+in_thread do
+  in_thread do
+    use_synth :supersaw
+    with_fx :reverb, mix:1, amp:1 do
+      intro
+      second
+      intro
+    end
+  end
+  in_thread do
+    use_synth :subpulse
+    
+    
+    intro
+    second
+    intro
+    in_thread do
+      use_synth :pluck
+      with_fx :reverb, mix:1, amp:1 do
+        intro
+        
+        second
+        intro
+      end
+      in_thread do
+        use_synth :saw
+        
+        intro
+        
+        second
+        intro
+        
+        in_thread do
+          use_synth :fm
+          with_fx :bitcrusher,mix:1,bits:8, amp: 1 do
+            
+            intro
+            second
+            intro
+            play chord(:G, :major,sustain: 8)
+          end
+        end
+        
+        
+        
+        
+        
+        
+        
+      end
+      
+    end
+  end
+  
+  
+  
+  
+  
+  
+end
+
+in_thread do
+  20.times do
+    with_fx :reverb,amp: 0.6,room: 0.5,mix: 1 do
+      use_synth :fm
+      drums
+      sleep beat*2
+    end
+  end
+end
